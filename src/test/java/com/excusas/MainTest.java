@@ -28,16 +28,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @DisplayName("▶️ Pruebas del Sistema de Gestión de Excusas")
 @ExtendWith(MockitoExtension.class)
-public class SistemaExcusasTest {
+public class MainTest {
 
     @Mock
     private EmailSender emailSender;
