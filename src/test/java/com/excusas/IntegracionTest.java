@@ -1,0 +1,110 @@
+
+package com.excusas;
+
+import com.excusas.empleados.Empleado;
+import com.excusas.empleados.encargados.*;
+import com.excusas.empleados.encargados.modos.ModoNormal;
+import com.excusas.empleados.encargados.modos.ModoProductivo;
+import com.excusas.excusas.Excusa;
+import com.excusas.excusas.MotivoExcusa;
+import com.excusas.mail.EmailSender;
+import com.excusas.prontuario.AdministradorProntuarios;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
+@DisplayName("⚙️ Pruebas de Integración del Flujo Completo")
+@ExtendWith(MockitoExtension.class)
+public class IntegracionTest {
+    @Mock
+    private EmailSender emailSender;
+
+    private LineaEncargados linea;
+    private Empleado empleadoTrivial, empleadoModerado, empleadoInverosimil;
+
+    @BeforeEach
+    void setUp() {
+        AdministradorProntuarios.reset();
+
+        Recepcionista recepcionista = new Recepcionista("Ana García", "ana@excusas.com", 1001, new ModoNormal(), emailSender);
+        SupervisorArea supervisor = new SupervisorArea("Carlos López", "carlos@excusas.com", 1002, new ModoProductivo(), emailSender);
+        GerenteRRHH gerente = new GerenteRRHH("María Rodríguez", "maria@excusas.com", 1003, new ModoNormal(), emailSender);
+        CEO ceo = new CEO("Roberto Silva", "roberto@excusas.com", 1004, new ModoNormal(), emailSender);
+
+        linea = new LineaEncargados();
+        linea.crearCadena(recepcionista, supervisor, gerente, ceo);
+
+        empleadoTrivial = new Empleado("Juan Pérez", "juan@empresa.com", 2001);
+        empleadoModerado = new Empleado("Ana Torres", "ana.torres@empresa.com", 2002);
+        empleadoInverosimil = new Empleado("Sofia Ruiz", "sofia@empresa.com", 2004);
+    }
+
+    @Test
+    @DisplayName("➡️ Flujo Trivial: Recepcionista debería manejar una excusa TRIVIAL")
+    void deberiaProcesarExcusaTrivialCorrectamente() {
+        empleadoTrivial.generarYEnviarExcusa(MotivoExcusa.QUEDARSE_DORMIDO, linea);
+
+        verify(emailSender).enviarEmail(
+                eq(empleadoTrivial.getEmail()),
+                eq("ana@excusas.com"),
+                eq("Notificación de excusa aceptada"),
+                anyString()
+        );
+        verify(emailSender, times(1)).enviarEmail(anyString(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("➡️ Flujo Moderado: Supervisor debería manejar una excusa MODERADA")
+    void deberiaProcesarExcusaModeradaCorrectamente() {
+        empleadoModerado.generarYEnviarExcusa(MotivoExcusa.PERDIDA_SUMINISTRO, linea);
+
+        verify(emailSender).enviarEmail(
+                eq("EDESUR@mailfake.com.ar"),
+                eq("carlos@excusas.com"),
+                eq("Consulta sobre corte de suministro"),
+                anyString()
+        );
+        verify(emailSender).enviarEmail(
+                eq(empleadoModerado.getEmail()),
+                eq("carlos@excusas.com"),
+                eq("Excusa moderada en revisión"),
+                anyString()
+        );
+        verify(emailSender, times(2)).enviarEmail(anyString(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("➡️ Flujo Inverosímil: CEO debería manejar la excusa y crear un prontuario")
+    void deberiaProcesarExcusaInverosimilCorrectamente() {
+        empleadoInverosimil.generarYEnviarExcusa(MotivoExcusa.INCREIBLE_INVEROSIMIL, linea);
+
+        verify(emailSender).enviarEmail(
+                eq(empleadoInverosimil.getEmail()),
+                eq("roberto@excusas.com"),
+                eq("Sobre su reciente y creativa excusa"),
+                anyString()
+        );
+        assertEquals(1, AdministradorProntuarios.getInstance().getProntuarios().size());
+        assertEquals(empleadoInverosimil, AdministradorProntuarios.getInstance().getProntuarios().get(0).getEmpleado());
+    }
+
+    @Test
+    @DisplayName("🛑 Flujo Rechazo: El Rechazador debería manejar una excusa no reconocida")
+    void deberiaRechazarExcusaNoManejable() {
+        Excusa excusaInvalida = mock(Excusa.class);
+        when(excusaInvalida.getTipo()).thenReturn("TIPO_INEXISTENTE");
+
+        linea.manejarExcusa(excusaInvalida);
+
+
+        verifyNoInteractions(emailSender);
+    }
+}

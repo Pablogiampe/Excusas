@@ -1,19 +1,18 @@
 package com.excusas.prontuario;
 
+import com.excusas.excepciones.ErrorProcesamiento;
+import com.excusas.excusas.Excusa;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import com.excusas.excepciones.ErrorProcesamiento;
 
-public class AdministradorProntuarios implements Observable {
+public class AdministradorProntuarios extends Observable {
     private static AdministradorProntuarios instancia;
-    private List<Prontuario> prontuarios;
-    private List<Observer> observers;
+    private final List<Prontuario> prontuarios;
 
     private AdministradorProntuarios() {
         this.prontuarios = new ArrayList<>();
-        this.observers = new ArrayList<>();
     }
 
     public static synchronized AdministradorProntuarios getInstance() {
@@ -23,60 +22,37 @@ public class AdministradorProntuarios implements Observable {
         return instancia;
     }
 
-    public void guardarProntuario(Prontuario prontuario) {
-        if (prontuario == null) {
-            throw new ErrorProcesamiento("No se puede guardar un prontuario nulo");
+    public void guardarProntuario(Excusa excusa) {
+        if (excusa == null) {
+            throw new ErrorProcesamiento("La excusa no puede ser nula para guardar un prontuario");
         }
-    
-        if (prontuario.getEmpleado() == null) {
-            throw new ErrorProcesamiento("El prontuario debe tener un empleado asociado");
+        if (excusa.getEmpleado() == null) {
+            throw new ErrorProcesamiento("La excusa debe tener un empleado asociado para guardar un prontuario");
         }
-    
-        if (prontuario.getExcusa() == null) {
-            throw new ErrorProcesamiento("El prontuario debe tener una excusa asociada");
-        }
-    
+
         try {
-            prontuarios.add(prontuario);
+            Prontuario prontuario = new Prontuario(
+                    excusa.getEmpleado(),
+                    excusa,
+                    excusa.getEmpleado().getLegajo()
+            );
+
+            this.prontuarios.add(prontuario);
             notificarObservers(prontuario);
         } catch (Exception e) {
             throw new ErrorProcesamiento("Error al guardar el prontuario: " + e.getMessage(), e);
         }
     }
 
-    @Override
-    public void agregarObserver(Observer observer) {
-        if (!observers.contains(observer)) {
-            observers.add(observer);
-        }
-    }
 
-    @Override
-    public void quitarObserver(Observer observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notificarObservers(Prontuario prontuario) {
-        for (Observer observer : new ArrayList<>(observers)) {
-            observer.notificar(prontuario);
-        }
-    }
 
     public List<Prontuario> getProntuarios() {
         return new ArrayList<>(prontuarios);
     }
-    
-    // Método para tests
-    public List<Observer> getObservers() {
-        return Collections.unmodifiableList(observers);
-    }
-    
 
     public static void reset() {
         if (instancia != null) {
             instancia.prontuarios.clear();
-            instancia.observers.clear();
         }
     }
 }

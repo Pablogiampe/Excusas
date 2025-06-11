@@ -1,5 +1,6 @@
 package com.excusas.prontuario;
 
 public interface Observer {
-    void notificar(Prontuario prontuario);
+
+    void actualizar(Prontuario prontuario);
 }
