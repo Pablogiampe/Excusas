@@ -39,8 +39,8 @@ public class Empleado implements IEmpleado {
         Excusa excusa = crearExcusaPorMotivo(motivo);
 
         System.out.println("--- NUEVA EXCUSA GENERADA ---");
-        System.out.println("Empleado: " + this.nombre + " ha generado una excusa de tipo: " + excusa.getTipo());
-
+        // Aquí estaba el error: cambiamos excusa.getTipo() por getClass().getSimpleName()
+        System.out.println("Empleado: " + this.nombre + " ha generado una excusa de tipo: " + excusa.getClass().getSimpleName());
 
         linea.manejarExcusa(excusa);
 

@@ -3,6 +3,7 @@ package com.excusas.empleados.encargados;
 import com.excusas.empleados.encargados.modos.ModoResolucion;
 import com.excusas.excusas.Excusa;
 import com.excusas.excusas.MotivoExcusa;
+import com.excusas.excusas.moderadas.ExcusaModerada; // Se importa la excusa específica
 import com.excusas.mail.EmailSender;
 
 public class SupervisorArea extends EncargadoBase {
@@ -12,14 +13,15 @@ public class SupervisorArea extends EncargadoBase {
         super(nombre, email, legajo, modoResolucion, emailSender);
     }
 
+    // Se sobreescribe el método para manejar SOLO excusas moderadas
+    // Esto reemplaza a los antiguos esResponsable() y procesarExcusa()
     @Override
-    protected boolean esResponsable(Excusa excusa) {
-        return "MODERADA".equals(excusa.getTipo());
-    }
-
-    @Override
-    protected void procesarExcusa(Excusa excusa) {
+    public void manejar(ExcusaModerada excusa) {
         System.out.println("Supervisor " + this.getNombre() + " procesando excusa MODERADA.");
+
+        // Se ejecuta la acción adicional de la estrategia
+        this.modoResolucion.ejecutarAccionAdicional(excusa);
+
         if (excusa.getMotivo() == MotivoExcusa.PERDIDA_SUMINISTRO) {
             emailSender.enviarEmail(
                     "EDESUR@mailfake.com.ar",

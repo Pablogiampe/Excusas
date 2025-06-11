@@ -1,37 +1,37 @@
 package com.excusas.empleados.encargados;
 
-import com.excusas.excepciones.ErrorConfiguracion;
+import com.excusas.empleados.encargados.modos.ModoNormal;
+import com.excusas.empleados.encargados.modos.ModoProductivo;
 import com.excusas.excusas.Excusa;
+import com.excusas.mail.EmailSender;
 
 public class LineaEncargados {
-    private ManejadorExcusas primerEncargado;
 
-    public void crearCadena(EncargadoBase... encargados) {
-        if (encargados.length == 0) {
-            throw new ErrorConfiguracion("La cadena de encargados no puede estar vacía");
-        }
+    private final ManejadorExcusas primerEncargado;
 
-        for (int i = 0; i < encargados.length; i++) {
-            if (encargados[i] == null) {
-                throw new ErrorConfiguracion("El encargado en la posición " + i + " no puede ser nulo");
-            }
-        }
+    /**
+     * El constructor ahora acepta las dependencias (como EmailSender)
+     * para que podamos usar un "mock" en las pruebas.
+     */
+    public LineaEncargados(EmailSender emailSender) {
+        // 1. Se crean las instancias de cada encargado, usando el EmailSender que nos pasaron
+        Recepcionista recepcionista = new Recepcionista("Ana García", "ana@excusas.com", 1001, new ModoNormal(), emailSender);
+        SupervisorArea supervisor = new SupervisorArea("Carlos López", "carlos@excusas.com", 1002, new ModoProductivo(), emailSender);
+        GerenteRRHH gerente = new GerenteRRHH("María Rodríguez", "maria@excusas.com", 1003, new ModoNormal(), emailSender);
+        CEO ceo = new CEO("Roberto Silva", "roberto@excusas.com", 1004, new ModoNormal(), emailSender);
+        Rechazador rechazador = new Rechazador();
 
-        primerEncargado = encargados[0];
+        // 2. Se enlaza la cadena manualmente
+        recepcionista.setSiguiente(supervisor);
+        supervisor.setSiguiente(gerente);
+        gerente.setSiguiente(ceo);
+        ceo.setSiguiente(rechazador);
 
-        for (int i = 0; i < encargados.length - 1; i++) {
-            encargados[i].setSiguiente(encargados[i + 1]);
-        }
-
-        encargados[encargados.length - 1].setSiguiente(new Rechazador());
+        // 3. Se define cuál es el primer eslabón de la cadena
+        this.primerEncargado = recepcionista;
     }
 
     public void manejarExcusa(Excusa excusa) {
-        if (primerEncargado == null) {
-            throw new ErrorConfiguracion("La cadena de encargados no ha sido inicializada");
-        }
         primerEncargado.manejarExcusa(excusa);
     }
-
-
 }

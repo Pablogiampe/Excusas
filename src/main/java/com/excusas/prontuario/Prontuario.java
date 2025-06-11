@@ -30,7 +30,8 @@ public class Prontuario {
     public String toString() {
         return "Prontuario{" +
                 "empleado=" + empleado +
-                ", excusa=" + excusa.getTipo() +
+                // Aquí estaba el error: cambiamos excusa.getTipo() por getClass().getSimpleName()
+                ", excusa=" + excusa.getClass().getSimpleName() +
                 ", numeroLegajo=" + numeroLegajo +
                 '}';
     }

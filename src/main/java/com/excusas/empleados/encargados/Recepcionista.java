@@ -2,6 +2,7 @@ package com.excusas.empleados.encargados;
 
 import com.excusas.empleados.encargados.modos.ModoResolucion;
 import com.excusas.excusas.Excusa;
+import com.excusas.excusas.triviales.ExcusaTrivial; // Se importa la excusa específica
 import com.excusas.mail.EmailSender;
 
 public class Recepcionista extends EncargadoBase {
@@ -11,14 +12,15 @@ public class Recepcionista extends EncargadoBase {
         super(nombre, email, legajo, modoResolucion, emailSender);
     }
 
+    // Se sobreescribe el método para manejar SOLO excusas triviales
     @Override
-    protected boolean esResponsable(Excusa excusa) {
-        return "TRIVIAL".equals(excusa.getTipo());
-    }
-
-    @Override
-    protected void procesarExcusa(Excusa excusa) {
+    public void manejar(ExcusaTrivial excusa) {
         System.out.println("Recepcionista " + this.getNombre() + " procesando excusa TRIVIAL.");
+
+        // Se ejecuta la acción adicional de la estrategia
+        this.modoResolucion.ejecutarAccionAdicional(excusa);
+
+        // Se envía la notificación
         enviarNotificacion(excusa, excusa.getEmpleado().getEmail());
     }
 

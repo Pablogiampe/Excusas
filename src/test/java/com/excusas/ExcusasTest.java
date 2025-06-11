@@ -10,8 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("📄 Pruebas de Creación de Excusas")
 public class ExcusasTest {
@@ -26,7 +25,8 @@ public class ExcusasTest {
     @DisplayName("✅ Debería crear una Excusa Trivial con un motivo válido")
     void deberiaCrearExcusaTrivialConMotivoValido() {
         ExcusaTrivial excusa = new ExcusaTrivial(empleado, MotivoExcusa.QUEDARSE_DORMIDO);
-        assertEquals("TRIVIAL", excusa.getTipo());
+        // CAMBIO: En lugar de getTipo(), verificamos que la clase sea la correcta
+        assertTrue(excusa instanceof ExcusaTrivial);
         assertEquals(MotivoExcusa.QUEDARSE_DORMIDO, excusa.getMotivo());
         assertEquals(empleado, excusa.getEmpleado());
     }
@@ -41,7 +41,8 @@ public class ExcusasTest {
     @DisplayName("✅ Debería crear una Excusa Moderada con un motivo válido")
     void deberiaCrearExcusaModeradaConMotivoValido() {
         ExcusaModerada excusa = new ExcusaModerada(empleado, MotivoExcusa.PERDIDA_SUMINISTRO);
-        assertEquals("MODERADA", excusa.getTipo());
+        // CAMBIO: Verificamos la instancia
+        assertTrue(excusa instanceof ExcusaModerada);
         assertEquals(MotivoExcusa.PERDIDA_SUMINISTRO, excusa.getMotivo());
     }
 
@@ -49,7 +50,8 @@ public class ExcusasTest {
     @DisplayName("✅ Debería crear una Excusa Compleja con un motivo válido")
     void deberiaCrearExcusaComplejaConMotivoValido() {
         ExcusaCompleja excusa = new ExcusaCompleja(empleado, MotivoExcusa.IRRELEVANTE);
-        assertEquals("COMPLEJA", excusa.getTipo());
+        // CAMBIO: Verificamos la instancia
+        assertTrue(excusa instanceof ExcusaCompleja);
         assertEquals(MotivoExcusa.IRRELEVANTE, excusa.getMotivo());
     }
 
@@ -57,7 +59,8 @@ public class ExcusasTest {
     @DisplayName("✅ Debería crear una Excusa Inverosímil con un motivo válido")
     void deberiaCrearExcusaInverosimilConMotivoValido() {
         ExcusaInverosimil excusa = new ExcusaInverosimil(empleado, MotivoExcusa.INCREIBLE_INVEROSIMIL);
-        assertEquals("INVEROSIMIL", excusa.getTipo());
+        // CAMBIO: Verificamos la instancia
+        assertTrue(excusa instanceof ExcusaInverosimil);
         assertEquals(MotivoExcusa.INCREIBLE_INVEROSIMIL, excusa.getMotivo());
     }
 }

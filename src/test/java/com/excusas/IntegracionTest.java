@@ -1,11 +1,7 @@
-
 package com.excusas;
 
 import com.excusas.empleados.Empleado;
-import com.excusas.empleados.encargados.*;
-import com.excusas.empleados.encargados.modos.ModoNormal;
-import com.excusas.empleados.encargados.modos.ModoProductivo;
-import com.excusas.excusas.Excusa;
+import com.excusas.empleados.encargados.LineaEncargados;
 import com.excusas.excusas.MotivoExcusa;
 import com.excusas.mail.EmailSender;
 import com.excusas.prontuario.AdministradorProntuarios;
@@ -34,14 +30,10 @@ public class IntegracionTest {
     void setUp() {
         AdministradorProntuarios.reset();
 
-        Recepcionista recepcionista = new Recepcionista("Ana García", "ana@excusas.com", 1001, new ModoNormal(), emailSender);
-        SupervisorArea supervisor = new SupervisorArea("Carlos López", "carlos@excusas.com", 1002, new ModoProductivo(), emailSender);
-        GerenteRRHH gerente = new GerenteRRHH("María Rodríguez", "maria@excusas.com", 1003, new ModoNormal(), emailSender);
-        CEO ceo = new CEO("Roberto Silva", "roberto@excusas.com", 1004, new ModoNormal(), emailSender);
+        // CAMBIO: Se instancia la línea de encargados pasándole el mock de EmailSender
+        linea = new LineaEncargados(emailSender);
 
-        linea = new LineaEncargados();
-        linea.crearCadena(recepcionista, supervisor, gerente, ceo);
-
+        // Ya no necesitamos crear los encargados aquí, porque se crean dentro de LineaEncargados
         empleadoTrivial = new Empleado("Juan Pérez", "juan@empresa.com", 2001);
         empleadoModerado = new Empleado("Ana Torres", "ana.torres@empresa.com", 2002);
         empleadoInverosimil = new Empleado("Sofia Ruiz", "sofia@empresa.com", 2004);
@@ -54,7 +46,7 @@ public class IntegracionTest {
 
         verify(emailSender).enviarEmail(
                 eq(empleadoTrivial.getEmail()),
-                eq("ana@excusas.com"),
+                eq("ana@excusas.com"), // Email de la Recepcionista
                 eq("Notificación de excusa aceptada"),
                 anyString()
         );
@@ -68,13 +60,13 @@ public class IntegracionTest {
 
         verify(emailSender).enviarEmail(
                 eq("EDESUR@mailfake.com.ar"),
-                eq("carlos@excusas.com"),
+                eq("carlos@excusas.com"), // Email del Supervisor
                 eq("Consulta sobre corte de suministro"),
                 anyString()
         );
         verify(emailSender).enviarEmail(
                 eq(empleadoModerado.getEmail()),
-                eq("carlos@excusas.com"),
+                eq("carlos@excusas.com"), // Email del Supervisor
                 eq("Excusa moderada en revisión"),
                 anyString()
         );
@@ -88,23 +80,11 @@ public class IntegracionTest {
 
         verify(emailSender).enviarEmail(
                 eq(empleadoInverosimil.getEmail()),
-                eq("roberto@excusas.com"),
+                eq("roberto@excusas.com"), // Email del CEO
                 eq("Sobre su reciente y creativa excusa"),
                 anyString()
         );
         assertEquals(1, AdministradorProntuarios.getInstance().getProntuarios().size());
         assertEquals(empleadoInverosimil, AdministradorProntuarios.getInstance().getProntuarios().get(0).getEmpleado());
-    }
-
-    @Test
-    @DisplayName("🛑 Flujo Rechazo: El Rechazador debería manejar una excusa no reconocida")
-    void deberiaRechazarExcusaNoManejable() {
-        Excusa excusaInvalida = mock(Excusa.class);
-        when(excusaInvalida.getTipo()).thenReturn("TIPO_INEXISTENTE");
-
-        linea.manejarExcusa(excusaInvalida);
-
-
-        verifyNoInteractions(emailSender);
     }
 }

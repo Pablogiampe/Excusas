@@ -2,6 +2,7 @@ package com.excusas.empleados.encargados;
 
 import com.excusas.empleados.encargados.modos.ModoResolucion;
 import com.excusas.excusas.Excusa;
+import com.excusas.excusas.inverosimiles.ExcusaInverosimil; // Importar la excusa específica
 import com.excusas.mail.EmailSender;
 import com.excusas.prontuario.AdministradorProntuarios;
 import com.excusas.prontuario.Observer;
@@ -16,16 +17,11 @@ public class CEO extends EncargadoBase implements Observer {
     }
 
     @Override
-    protected boolean esResponsable(Excusa excusa) {
-        return "INVEROSIMIL".equals(excusa.getTipo());
-    }
-
-    @Override
-    protected void procesarExcusa(Excusa excusa) {
+    public void manejar(ExcusaInverosimil excusa) {
         System.out.println("CEO " + this.getNombre() + " procesando excusa INVEROSIMIL.");
 
+        this.modoResolucion.ejecutarAccionAdicional(excusa);
         enviarNotificacion(excusa, excusa.getEmpleado().getEmail());
-
         AdministradorProntuarios.getInstance().guardarProntuario(excusa);
     }
 
@@ -42,6 +38,6 @@ public class CEO extends EncargadoBase implements Observer {
     @Override
     public void actualizar(Prontuario prontuario) {
         System.out.println("CEO " + this.getNombre() + " notificado sobre nuevo prontuario: " +
-                prontuario);
+                prontuario.getExcusa().getClass().getSimpleName());
     }
 }

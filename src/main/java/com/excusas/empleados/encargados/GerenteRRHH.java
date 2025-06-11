@@ -2,6 +2,7 @@ package com.excusas.empleados.encargados;
 
 import com.excusas.empleados.encargados.modos.ModoResolucion;
 import com.excusas.excusas.Excusa;
+import com.excusas.excusas.complejas.ExcusaCompleja; // Importar la excusa específica
 import com.excusas.mail.EmailSender;
 
 public class GerenteRRHH extends EncargadoBase {
@@ -11,15 +12,13 @@ public class GerenteRRHH extends EncargadoBase {
         super(nombre, email, legajo, modoResolucion, emailSender);
     }
 
+    // Sobrescribimos SOLAMENTE el método para la excusa que nos interesa
     @Override
-    protected boolean esResponsable(Excusa excusa) {
-        return "COMPLEJA".equals(excusa.getTipo());
-    }
-
-    @Override
-    protected void procesarExcusa(Excusa excusa) {
+    public void manejar(ExcusaCompleja excusa) {
         System.out.println("Gerente de RRHH " + this.getNombre() + " procesando excusa COMPLEJA.");
 
+        // Aplicamos la estrategia y notificamos
+        this.modoResolucion.ejecutarAccionAdicional(excusa);
         enviarNotificacion(excusa, excusa.getEmpleado().getEmail());
     }
 

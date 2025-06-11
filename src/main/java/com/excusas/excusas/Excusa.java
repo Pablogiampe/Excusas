@@ -1,6 +1,7 @@
 package com.excusas.excusas;
 
 import com.excusas.empleados.Empleado;
+import com.excusas.empleados.encargados.ManejadorExcusas;
 
 public abstract class Excusa {
     protected Empleado empleado;
@@ -19,5 +20,6 @@ public abstract class Excusa {
         return motivo;
     }
 
-    public abstract String getTipo();
+
+    public abstract void serManejadaPor(ManejadorExcusas manejador);
 }

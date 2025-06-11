@@ -1,11 +1,12 @@
 package com.excusas.excusas.triviales;
 
 import com.excusas.empleados.Empleado;
+import com.excusas.empleados.encargados.ManejadorExcusas;
 import com.excusas.excusas.Excusa;
 import com.excusas.excusas.MotivoExcusa;
 
 public class ExcusaTrivial extends Excusa {
-    
+
     public ExcusaTrivial(Empleado empleado, MotivoExcusa motivo) {
         super(empleado, motivo);
         if (motivo != MotivoExcusa.QUEDARSE_DORMIDO && motivo != MotivoExcusa.PERDI_TRANSPORTE) {
@@ -14,7 +15,7 @@ public class ExcusaTrivial extends Excusa {
     }
 
     @Override
-    public String getTipo() {
-        return "TRIVIAL";
+    public void serManejadaPor(ManejadorExcusas manejador) {
+        manejador.manejar(this); // Llama a manejar(ExcusaTrivial excusa)
     }
 }

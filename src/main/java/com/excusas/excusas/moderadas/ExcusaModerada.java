@@ -1,11 +1,12 @@
 package com.excusas.excusas.moderadas;
 
 import com.excusas.empleados.Empleado;
+import com.excusas.empleados.encargados.ManejadorExcusas;
 import com.excusas.excusas.Excusa;
 import com.excusas.excusas.MotivoExcusa;
 
 public class ExcusaModerada extends Excusa {
-    
+
     public ExcusaModerada(Empleado empleado, MotivoExcusa motivo) {
         super(empleado, motivo);
         if (motivo != MotivoExcusa.PERDIDA_SUMINISTRO && motivo != MotivoExcusa.CUIDADO_FAMILIAR) {
@@ -14,7 +15,7 @@ public class ExcusaModerada extends Excusa {
     }
 
     @Override
-    public String getTipo() {
-        return "MODERADA";
+    public void serManejadaPor(ManejadorExcusas manejador) {
+        manejador.manejar(this); // Llama a manejar(ExcusaModerada excusa)
     }
 }
