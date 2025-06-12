@@ -51,5 +51,5 @@ Sistema para la empresa ficticia "Excusas S.A." que gestiona las excusas de empl
 3.  **Procesar Excusa Compleja**: El `GerenteRRHH` recibe y analiza excusas que requieren una evaluación más profunda.
 4.  **Procesar Excusa Inverosímil**: El `CEO` maneja excusas inverosímiles, las aprueba por su creatividad y genera un prontuario.
 5.  **Rechazar Excusa**: Si una excusa no corresponde a ningún tipo manejado, llega al `Rechazador` al final de la cadena.
-6.  **Notificar Prontuario**: Cuando el `CEO` guarda un `Prontuario`, el `AdministradorProntuarios` notifica a todos los `Observer` suscritos (otros CEOs).
+6.  **Notificar Prontuario**: Cuando el `CEO` guarda un `Prontuario`, el AdministradorProntuarios notifica a todos los `Observer` suscritos (otros CEOs).
 

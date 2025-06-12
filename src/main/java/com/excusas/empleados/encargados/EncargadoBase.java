@@ -32,7 +32,7 @@ public abstract class EncargadoBase extends Empleado implements ManejadorExcusas
 
     @Override
     public void manejar(ExcusaTrivial excusa) {
-        pasarAlSiguiente(excusa); 
+        pasarAlSiguiente(excusa);
     }
 
     @Override
