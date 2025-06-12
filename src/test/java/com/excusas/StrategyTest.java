@@ -40,7 +40,7 @@ public class StrategyTest {
     void setUp() {
         empleado = new Empleado("Test User", "test@empresa.com", 1001);
         excusa = new ExcusaTrivial(empleado, MotivoExcusa.QUEDARSE_DORMIDO);
-        System.setOut(new PrintStream(outputStreamCaptor)); // Redirigir System.out
+        System.setOut(new PrintStream(outputStreamCaptor));
     }
 
     @AfterEach
@@ -49,25 +49,35 @@ public class StrategyTest {
     }
 
     @Test
-    @DisplayName("😐 Modo Normal: Debería procesar la excusa sin ejecutar acciones extra")
-    void modoNormalDeberiaProcesarSinAccionExtra() {
+    @DisplayName("😐 Modo Normal: Debería procesar la excusa normalmente")
+    void modoNormalDeberiaProcesarNormalmente() {
         ModoNormal modo = new ModoNormal();
         Recepcionista recepcionista = new Recepcionista("Ana", "ana@excusas.com", 1001, modo, emailSender);
 
         recepcionista.manejarExcusa(excusa);
 
+        // Verifica que se procesó la excusa
         verify(emailSender).enviarEmail(
                 eq("test@empresa.com"),
                 eq("ana@excusas.com"),
                 anyString(),
                 anyString()
         );
+        
+        // Verifica que NO se envió email al CTO
+        verify(emailSender, never()).enviarEmail(
+                eq("cto@excusas.com"),
+                anyString(),
+                anyString(),
+                anyString()
+        );
+        
         assertTrue(outputStreamCaptor.toString().trim().contains("Recepcionista Ana procesando excusa TRIVIAL."));
     }
 
     @Test
-    @DisplayName("😴 Modo Vago: Debería procesar la excusa igualmente, sin acciones extra")
-    void modoVagoDeberiaProcesarNormalmente() {
+    @DisplayName("😴 Modo Vago: Debería pasar la excusa al siguiente sin procesarla")
+    void modoVagoDeberiaPasarSinProcesar() {
         ModoVago modo = new ModoVago();
         Recepcionista recepcionista = new Recepcionista("Ana", "ana@excusas.com", 1001, modo, emailSender);
         ManejadorExcusas siguienteEncargado = mock(ManejadorExcusas.class);
@@ -75,24 +85,29 @@ public class StrategyTest {
 
         recepcionista.manejarExcusa(excusa);
 
-        verify(emailSender).enviarEmail(
+        // Verifica que pasó al siguiente
+        verify(siguienteEncargado).manejarExcusa(excusa);
+        
+        // Verifica que NO procesó la excusa (no envió email al empleado)
+        verify(emailSender, never()).enviarEmail(
                 eq("test@empresa.com"),
-                eq("ana@excusas.com"),
+                anyString(),
                 anyString(),
                 anyString()
         );
-
-        verify(siguienteEncargado, never()).manejarExcusa(any());
+        
+        assertTrue(outputStreamCaptor.toString().trim().contains("LOG [Modo Vago]: El encargado Ana está en modo vago"));
     }
 
     @Test
-    @DisplayName("🚀 Modo Productivo: Debería procesar y loggear la acción adicional")
-    void modoProductivoDeberiaLoggearAccion() {
+    @DisplayName("🚀 Modo Productivo: Debería procesar y enviar email adicional al CTO")
+    void modoProductivoDeberiaEnviarEmailAdicional() {
         ModoProductivo modo = new ModoProductivo();
         Recepcionista recepcionista = new Recepcionista("Ana", "ana@excusas.com", 1001, modo, emailSender);
 
         recepcionista.manejarExcusa(excusa);
 
+        // Verifica que se procesó la excusa normalmente
         verify(emailSender).enviarEmail(
                 eq("test@empresa.com"),
                 eq("ana@excusas.com"),
@@ -100,6 +115,15 @@ public class StrategyTest {
                 anyString()
         );
 
+        // Verifica que se envió el email adicional al CTO
+        verify(emailSender).enviarEmail(
+                eq("cto@excusas.com"),
+                eq("ana@excusas.com"),
+                eq("Notificación de excusa procesada"),
+                contains("Test User")
+        );
+
+        // Verifica que se imprimió el log
         String consoleOutput = outputStreamCaptor.toString().trim();
         assertTrue(consoleOutput.contains("LOG [Modo Productivo]: Se está procesando una excusa para el empleado: Test User"));
     }

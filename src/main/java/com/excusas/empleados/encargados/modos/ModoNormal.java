@@ -1,9 +1,11 @@
 package com.excusas.empleados.encargados.modos;
 
+import com.excusas.empleados.encargados.EncargadoBase;
 import com.excusas.excusas.Excusa;
 
-public class ModoNormal implements ModoResolucion {
+public class ModoNormal implements IModo {
     @Override
-    public void ejecutarAccionAdicional(Excusa excusa) {
+    public void manejar(EncargadoBase encargado, Excusa excusa) {
+        encargado.procesar(excusa);
     }
 }

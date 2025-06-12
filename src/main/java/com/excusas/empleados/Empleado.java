@@ -5,7 +5,8 @@ import com.excusas.excusas.Excusa;
 import com.excusas.excusas.MotivoExcusa;
 import com.excusas.excusas.complejas.ExcusaCompleja;
 import com.excusas.excusas.inverosimiles.ExcusaInverosimil;
-import com.excusas.excusas.moderadas.ExcusaModerada;
+import com.excusas.excusas.moderadas.ExcusaPerdidaSuministro;
+import com.excusas.excusas.moderadas.ExcusaCuidadoFamiliar;
 import com.excusas.excusas.triviales.ExcusaTrivial;
 
 public class Empleado implements IEmpleado {
@@ -39,14 +40,12 @@ public class Empleado implements IEmpleado {
         Excusa excusa = crearExcusaPorMotivo(motivo);
 
         System.out.println("--- NUEVA EXCUSA GENERADA ---");
-        // Aquí estaba el error: cambiamos excusa.getTipo() por getClass().getSimpleName()
         System.out.println("Empleado: " + this.nombre + " ha generado una excusa de tipo: " + excusa.getClass().getSimpleName());
 
         linea.manejarExcusa(excusa);
 
         return excusa;
     }
-
 
     private Excusa crearExcusaPorMotivo(MotivoExcusa motivo) {
         switch (motivo) {
@@ -55,8 +54,10 @@ public class Empleado implements IEmpleado {
                 return new ExcusaTrivial(this, motivo);
 
             case PERDIDA_SUMINISTRO:
+                return new ExcusaPerdidaSuministro(this);
+
             case CUIDADO_FAMILIAR:
-                return new ExcusaModerada(this, motivo);
+                return new ExcusaCuidadoFamiliar(this);
 
             case IRRELEVANTE:
                 return new ExcusaCompleja(this, motivo);
@@ -65,7 +66,6 @@ public class Empleado implements IEmpleado {
                 return new ExcusaInverosimil(this, motivo);
 
             default:
-                // Si en el futuro se añade un motivo y no se contempla aquí, esto lanzará un error.
                 throw new IllegalArgumentException("Motivo de excusa no soportado: " + motivo);
         }
     }

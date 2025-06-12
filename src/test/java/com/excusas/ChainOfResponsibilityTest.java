@@ -13,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.excusas.excusas.moderadas.ExcusaCuidadoFamiliar;
+
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -56,7 +58,7 @@ public class ChainOfResponsibilityTest {
     @DisplayName("➡️ Debería pasar la excusa al siguiente si el primero no es responsable")
     void deberiaPasarExcusaAlSiguiente() {
         // CAMBIO: Ya no se llama a crearCadena()
-        ExcusaModerada excusa = new ExcusaModerada(empleado, MotivoExcusa.CUIDADO_FAMILIAR);
+        ExcusaCuidadoFamiliar excusa = new ExcusaCuidadoFamiliar(empleado);
         linea.manejarExcusa(excusa);
 
         // Verificamos que el email lo envía el Supervisor

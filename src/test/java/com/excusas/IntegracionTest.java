@@ -24,18 +24,17 @@ public class IntegracionTest {
     private EmailSender emailSender;
 
     private LineaEncargados linea;
-    private Empleado empleadoTrivial, empleadoModerado, empleadoInverosimil;
+    private Empleado empleadoTrivial, empleadoModerado, empleadoCuidadoFamiliar, empleadoInverosimil;
 
     @BeforeEach
     void setUp() {
         AdministradorProntuarios.reset();
 
-        // CAMBIO: Se instancia la línea de encargados pasándole el mock de EmailSender
         linea = new LineaEncargados(emailSender);
 
-        // Ya no necesitamos crear los encargados aquí, porque se crean dentro de LineaEncargados
         empleadoTrivial = new Empleado("Juan Pérez", "juan@empresa.com", 2001);
         empleadoModerado = new Empleado("Ana Torres", "ana.torres@empresa.com", 2002);
+        empleadoCuidadoFamiliar = new Empleado("Carlos Ruiz", "carlos.ruiz@empresa.com", 2003);
         empleadoInverosimil = new Empleado("Sofia Ruiz", "sofia@empresa.com", 2004);
     }
 
@@ -46,7 +45,7 @@ public class IntegracionTest {
 
         verify(emailSender).enviarEmail(
                 eq(empleadoTrivial.getEmail()),
-                eq("ana@excusas.com"), // Email de la Recepcionista
+                eq("ana@excusas.com"),
                 eq("Notificación de excusa aceptada"),
                 anyString()
         );
@@ -54,23 +53,51 @@ public class IntegracionTest {
     }
 
     @Test
-    @DisplayName("➡️ Flujo Moderado: Supervisor debería manejar una excusa MODERADA")
-    void deberiaProcesarExcusaModeradaCorrectamente() {
+    @DisplayName("➡️ Flujo Moderado - Pérdida Suministro: Supervisor debería consultar a EDESUR")
+    void deberiaProcesarExcusaPerdidaSuministroCorrectamente() {
         empleadoModerado.generarYEnviarExcusa(MotivoExcusa.PERDIDA_SUMINISTRO, linea);
 
+        // Verifica que se envió email a EDESUR
         verify(emailSender).enviarEmail(
                 eq("EDESUR@mailfake.com.ar"),
-                eq("carlos@excusas.com"), // Email del Supervisor
+                eq("carlos@excusas.com"),
                 eq("Consulta sobre corte de suministro"),
                 anyString()
         );
+        
+        // Verifica que se notificó al empleado
         verify(emailSender).enviarEmail(
                 eq(empleadoModerado.getEmail()),
-                eq("carlos@excusas.com"), // Email del Supervisor
+                eq("carlos@excusas.com"),
                 eq("Excusa moderada en revisión"),
                 anyString()
         );
-        verify(emailSender, times(2)).enviarEmail(anyString(), anyString(), anyString(), anyString());
+        
+        verify(emailSender, times(3)).enviarEmail(anyString(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("➡️ Flujo Moderado - Cuidado Familiar: Supervisor debería consultar a RRHH")
+    void deberiaProcesarExcusaCuidadoFamiliarCorrectamente() {
+        empleadoCuidadoFamiliar.generarYEnviarExcusa(MotivoExcusa.CUIDADO_FAMILIAR, linea);
+
+        // Verifica que se envió email a RRHH
+        verify(emailSender).enviarEmail(
+                eq("rrhh@excusas.com"),
+                eq("carlos@excusas.com"),
+                eq("Verificación de situación familiar"),
+                anyString()
+        );
+        
+        // Verifica que se notificó al empleado
+        verify(emailSender).enviarEmail(
+                eq(empleadoCuidadoFamiliar.getEmail()),
+                eq("carlos@excusas.com"),
+                eq("Excusa moderada en revisión"),
+                anyString()
+        );
+        
+        verify(emailSender, times(3)).enviarEmail(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -80,7 +107,7 @@ public class IntegracionTest {
 
         verify(emailSender).enviarEmail(
                 eq(empleadoInverosimil.getEmail()),
-                eq("roberto@excusas.com"), // Email del CEO
+                eq("roberto@excusas.com"),
                 eq("Sobre su reciente y creativa excusa"),
                 anyString()
         );

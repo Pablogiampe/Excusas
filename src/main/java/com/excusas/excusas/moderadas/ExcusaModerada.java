@@ -15,7 +15,7 @@ public class ExcusaModerada extends Excusa {
     }
 
     @Override
-    public void serManejadaPor(ManejadorExcusas manejador) {
-        manejador.manejar(this); // Llama a manejar(ExcusaModerada excusa)
+    public boolean serManejadaPor(ManejadorExcusas manejador) {
+        return manejador.manejar(this);
     }
 }
