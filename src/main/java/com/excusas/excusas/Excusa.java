@@ -20,6 +20,5 @@ public abstract class Excusa {
         return motivo;
     }
 
-    // Método que retorna true si el manejador procesó la excusa
     public abstract boolean serManejadaPor(ManejadorExcusas manejador);
 }

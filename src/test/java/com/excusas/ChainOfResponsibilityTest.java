@@ -32,7 +32,6 @@ public class ChainOfResponsibilityTest {
 
     @BeforeEach
     void setUp() {
-        // CAMBIO: Se instancia la línea directamente con el mock de EmailSender
         linea = new LineaEncargados(emailSender);
         empleado = new Empleado("Juan Pérez", "juan@empresa.com", 2001);
     }
@@ -40,14 +39,12 @@ public class ChainOfResponsibilityTest {
     @Test
     @DisplayName("✅ El primer encargado debería manejar la excusa si es responsable")
     void deberiaManejarExcusaElPrimerEncargado() {
-        // CAMBIO: Ya no se llama a crearCadena()
         ExcusaTrivial excusa = new ExcusaTrivial(empleado, MotivoExcusa.QUEDARSE_DORMIDO);
         linea.manejarExcusa(excusa);
 
-        // Verificamos que se envió el email con los datos correctos (hardcodeados en LineaEncargados)
         verify(emailSender).enviarEmail(
                 eq(empleado.getEmail()),
-                eq("ana@excusas.com"), // Email de la Recepcionista
+                eq("ana@excusas.com"),
                 anyString(),
                 anyString()
         );
@@ -57,14 +54,13 @@ public class ChainOfResponsibilityTest {
     @Test
     @DisplayName("➡️ Debería pasar la excusa al siguiente si el primero no es responsable")
     void deberiaPasarExcusaAlSiguiente() {
-        // CAMBIO: Ya no se llama a crearCadena()
         ExcusaCuidadoFamiliar excusa = new ExcusaCuidadoFamiliar(empleado);
         linea.manejarExcusa(excusa);
 
-        // Verificamos que el email lo envía el Supervisor
+
         verify(emailSender).enviarEmail(
                 eq(empleado.getEmail()),
-                eq("carlos@excusas.com"), // Email del Supervisor
+                eq("carlos@excusas.com"),
                 anyString(),
                 anyString()
         );

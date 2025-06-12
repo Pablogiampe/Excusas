@@ -57,7 +57,6 @@ public class IntegracionTest {
     void deberiaProcesarExcusaPerdidaSuministroCorrectamente() {
         empleadoModerado.generarYEnviarExcusa(MotivoExcusa.PERDIDA_SUMINISTRO, linea);
 
-        // Verifica que se envió email a EDESUR
         verify(emailSender).enviarEmail(
                 eq("EDESUR@mailfake.com.ar"),
                 eq("carlos@excusas.com"),
@@ -65,7 +64,6 @@ public class IntegracionTest {
                 anyString()
         );
         
-        // Verifica que se notificó al empleado
         verify(emailSender).enviarEmail(
                 eq(empleadoModerado.getEmail()),
                 eq("carlos@excusas.com"),
@@ -81,7 +79,6 @@ public class IntegracionTest {
     void deberiaProcesarExcusaCuidadoFamiliarCorrectamente() {
         empleadoCuidadoFamiliar.generarYEnviarExcusa(MotivoExcusa.CUIDADO_FAMILIAR, linea);
 
-        // Verifica que se envió email a RRHH
         verify(emailSender).enviarEmail(
                 eq("rrhh@excusas.com"),
                 eq("carlos@excusas.com"),
@@ -89,7 +86,6 @@ public class IntegracionTest {
                 anyString()
         );
         
-        // Verifica que se notificó al empleado
         verify(emailSender).enviarEmail(
                 eq(empleadoCuidadoFamiliar.getEmail()),
                 eq("carlos@excusas.com"),

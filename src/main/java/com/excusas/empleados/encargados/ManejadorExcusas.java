@@ -11,7 +11,6 @@ import com.excusas.excusas.triviales.ExcusaTrivial;
 public interface ManejadorExcusas {
     void manejarExcusa(Excusa excusa);
 
-    // Los métodos manejar ahora retornan boolean para indicar si procesaron la excusa
     boolean manejar(ExcusaTrivial excusa);
     boolean manejar(ExcusaModerada excusa);
     boolean manejar(ExcusaPerdidaSuministro excusa);

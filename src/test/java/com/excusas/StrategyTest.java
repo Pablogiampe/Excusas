@@ -56,7 +56,6 @@ public class StrategyTest {
 
         recepcionista.manejarExcusa(excusa);
 
-        // Verifica que se procesó la excusa
         verify(emailSender).enviarEmail(
                 eq("test@empresa.com"),
                 eq("ana@excusas.com"),
@@ -64,7 +63,6 @@ public class StrategyTest {
                 anyString()
         );
         
-        // Verifica que NO se envió email al CTO
         verify(emailSender, never()).enviarEmail(
                 eq("cto@excusas.com"),
                 anyString(),
@@ -85,10 +83,8 @@ public class StrategyTest {
 
         recepcionista.manejarExcusa(excusa);
 
-        // Verifica que pasó al siguiente
         verify(siguienteEncargado).manejarExcusa(excusa);
         
-        // Verifica que NO procesó la excusa (no envió email al empleado)
         verify(emailSender, never()).enviarEmail(
                 eq("test@empresa.com"),
                 anyString(),
@@ -107,7 +103,6 @@ public class StrategyTest {
 
         recepcionista.manejarExcusa(excusa);
 
-        // Verifica que se procesó la excusa normalmente
         verify(emailSender).enviarEmail(
                 eq("test@empresa.com"),
                 eq("ana@excusas.com"),
@@ -115,7 +110,6 @@ public class StrategyTest {
                 anyString()
         );
 
-        // Verifica que se envió el email adicional al CTO
         verify(emailSender).enviarEmail(
                 eq("cto@excusas.com"),
                 eq("ana@excusas.com"),
@@ -123,7 +117,6 @@ public class StrategyTest {
                 contains("Test User")
         );
 
-        // Verifica que se imprimió el log
         String consoleOutput = outputStreamCaptor.toString().trim();
         assertTrue(consoleOutput.contains("LOG [Modo Productivo]: Se está procesando una excusa para el empleado: Test User"));
     }

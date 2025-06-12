@@ -41,13 +41,5 @@ public class ExcepcionesTest {
     }
 
 
-    /*
-    @Test
-    @DisplayName("❌ Debería lanzar ErrorProcesamiento con formato de email inválido")
-    void deberiaLanzarErrorProcesamientoConEmailInvalido() {
-        EmailSenderImpl realEmailSender = new EmailSenderImpl();
-        ErrorProcesamiento exception = assertThrows(ErrorProcesamiento.class, () -> realEmailSender.enviarEmail("email-invalido", "origen@test.com", "Asunto", "Cuerpo"));
-        assertTrue(exception.getMessage().contains("El email de destino no tiene un formato válido"));
-    }
-    */
+
 }
