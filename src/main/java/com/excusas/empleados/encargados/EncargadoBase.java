@@ -32,22 +32,22 @@ public abstract class EncargadoBase extends Empleado implements ManejadorExcusas
 
     @Override
     public void manejar(ExcusaTrivial excusa) {
-        pasarAlSiguiente(excusa); // Por defecto, no la manejo
+        pasarAlSiguiente(excusa); 
     }
 
     @Override
     public void manejar(ExcusaModerada excusa) {
-        pasarAlSiguiente(excusa); // Por defecto, no la manejo
+        pasarAlSiguiente(excusa);
     }
 
     @Override
     public void manejar(ExcusaCompleja excusa) {
-        pasarAlSiguiente(excusa); // Por defecto, no la manejo
+        pasarAlSiguiente(excusa);
     }
 
     @Override
     public void manejar(ExcusaInverosimil excusa) {
-        pasarAlSiguiente(excusa); // Por defecto, no la manejo
+        pasarAlSiguiente(excusa);
     }
 
     private void pasarAlSiguiente(Excusa excusa) {
